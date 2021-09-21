@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Http\Resources\BookCollection as ResourcesBookCollection;
 use App\Http\Resources\BookResource;
+use App\Http\Resources\CategoryCollection;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -17,9 +19,20 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::paginate(2);
+        $categories = Category::all();
 
-        return new ResourcesBookCollection($books);
+        if (request()->category) {
+            $books = Book::with('category')->whereHas('category', function ($query) {
+                $query->where('slug', request()->category);
+            })->get();
+        } else {
+            $books = Book::all();
+        }
+
+        return [
+            'books' => new ResourcesBookCollection($books),
+            'categories' => new CategoryCollection($categories)
+        ];
     }
 
     /**
