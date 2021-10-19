@@ -7,8 +7,10 @@ use App\Models\Book;
 use App\Http\Resources\BookCollection as ResourcesBookCollection;
 use App\Http\Resources\BookResource;
 use App\Http\Resources\CategoryCollection;
+use App\Mail\createComment;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class BookController extends Controller
 {

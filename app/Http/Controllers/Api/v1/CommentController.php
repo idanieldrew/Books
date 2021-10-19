@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BookResource;
+use App\Jobs\actionBook;
 use App\Models\Book;
 use App\Models\Comment;
 use Illuminate\Http\Request;
@@ -36,12 +37,14 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,Book $book)
+    public function store(Request $request, Book $book)
     {
         $book->comments()->create([
-            'body' => $request->body,
+            'body' => $new = $request->body,
             'user_id' => 2 // auth()->id() || if(primary-key === id) auth()->user()->id 
         ]);
+        
+        actionBook::dispatch($book);
 
         return new BookResource($book);
     }
